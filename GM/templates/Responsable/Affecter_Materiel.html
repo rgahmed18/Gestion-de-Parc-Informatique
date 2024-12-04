@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min2167.css' %}">
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dist/js/adminlte.min2167.js' %}"></script>
+    <script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block"></li>
+                <li class="nav-item d-none d-sm-inline-block"></li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="{% url 'ResponsableSignOut' %}" class="nav-link">Logout</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link">
+                <img src="{% static 'dist\img\download (2).jpeg' %}" alt="AdminLTE Logo"
+                    class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">GM_ANEF</span>
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">{{ user.first_name }} {{ user.last_name }}</a>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+                        <li class="nav-item">
+                            <a href="{% url 'Responsable_Dashboard' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Tableau de bord</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{% url 'Intervention' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Intervention</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'Stock_Materiel' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Stock Materiel</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'Ajouter_Materiel' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Ajouter Materiel</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'Affecter_Materiel' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Affecter Materiel</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'Materiel_Bureau' %}" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>Materiel Bureau</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item active"><a href="{% url 'Dashboard' %}">Tableau de bord</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="content">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">affectation materiel</h3>
+                    </div>
+
+                    <form method="post" action="{% url 'Affecter_Materiel' %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="id_num_inventaire">N° Inventaire : </label>
+                                <select name="num_inventaire" id="id_num_inventaire" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for stock in stocks %}
+                                    <option value="{{ stock.num_inventaire }}">{{ stock.num_inventaire }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_nombre">Quantité :</label>
+                                <input type="number" name="nombre" id="id_nombre" class="form-control" value="1" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_nom_service">Liste des Services :</label>
+                                <select name="nom_service" id="id_nom_service" class="form-control" required>
+                                    <option value=""></option>
+                                    {% for service in services %}
+                                    <option value="{{ service.nom_service }}">{{ service.nom_service }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_num_bureau">Liste des Bureaux :</label>
+                                <select name="num_bureau" id="id_num_bureau" class="form-control" required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <footer class="main-footer">
+            <div class="float-right d-none d-sm-block">
+                <b>Version</b> 3.2.0
+            </div>
+            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io/">AdminLTE.io</a>.</strong> All rights
+            reserved.
+        </footer>
+
+        <aside class="control-sidebar control-sidebar-dark"></aside>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // Data for bureaux, hardcoded for demonstration
+            var bureauxData = {
+                "Service d'écologie et biodiversité et conservation des sols": [
+                    {"num_bureau": "1"},
+                    {"num_bureau": "2"},
+                    {"num_bureau": "3"},
+                    {"num_bureau": "4"},
+                    {"num_bureau": "5"},
+                    {"num_bureau": "6"},
+                    {"num_bureau": "7"},
+                    {"num_bureau": "8"},
+                    {"num_bureau": "9"},
+                    {"num_bureau": "10"},
+                ],
+                "Service de formation continue": [
+                    {"num_bureau": "11"},
+                    {"num_bureau": "12"},
+                    {"num_bureau": "13"},
+                    {"num_bureau": "14"},
+                    {"num_bureau": "15"},
+                    {"num_bureau": "16"},
+                    {"num_bureau": "17"},
+                    {"num_bureau": "18"},
+                    {"num_bureau": "19"},
+                    {"num_bureau": "20"},
+                ],
+                "Service génétique et amélioration des arbres forestières et sylviculture": [
+                    {"num_bureau": "21"},
+                    {"num_bureau": "22"},
+                    {"num_bureau": "23"},
+                    {"num_bureau": "24"},
+                    {"num_bureau": "25"},
+                    {"num_bureau": "26"},
+                    {"num_bureau": "27"},
+                    {"num_bureau": "28"},
+                    {"num_bureau": "29"},
+                    {"num_bureau": "30"},
+                ],
+                "Service technologie du bois": [
+                    {"num_bureau": "31"},
+                    {"num_bureau": "32"},
+                    {"num_bureau": "33"},
+                    {"num_bureau": "34"},
+                    {"num_bureau": "35"},
+                    {"num_bureau": "36"},
+                    {"num_bureau": "37"},
+                    {"num_bureau": "38"},
+                    {"num_bureau": "39"},
+                    {"num_bureau": "40"},
+                ],
+                "Service ingenierie des compétences et gestion de formation": [
+                    {"num_bureau": "41"},
+                    {"num_bureau": "42"},
+                    {"num_bureau": "43"},
+                    {"num_bureau": "44"},
+                    {"num_bureau": "45"},
+                    {"num_bureau": "46"},
+                    {"num_bureau": "47"},
+                    {"num_bureau": "48"},
+                    {"num_bureau": "49"},
+                    {"num_bureau": "50"},
+                ]
+                // Add more services and bureaux as needed
+            };
+
+            $('#id_nom_service').on('change', function() {
+                var nom_service = $(this).val();
+                var bureaux_select = $('#id_num_bureau');
+                bureaux_select.empty();
+                bureaux_select.append('<option value=""></option>');
+
+                if (nom_service in bureauxData) {
+                    var bureaux = bureauxData[nom_service];
+                    $.each(bureaux, function(index, bureau) {
+                        bureaux_select.append('<option value="' + bureau.num_bureau + '">' + bureau.num_bureau + '</option>');
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

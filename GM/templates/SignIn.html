@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="absolute top-0 left-0 p-4">
+        <img src="{% static 'dist/img/download__2_-removebg-preview (1).png' %}" alt="" class="w-100 h-auto">
+    </div>
+    <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <form id="signinForm" method="post" action="{% url 'SignIn' %}">
+            {% csrf_token %}
+            <h2 class="text-2xl font-bold mb-6 text-center">Sign In</h2>
+            <div class="mb-4">
+                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign In</button>
+                <a href="#" class="inline-block align-baseline font-bold text-sm text-green-500 hover:text-blue-800">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#signinForm').on('submit', function(event) {
+                event.preventDefault();
+                const username = $('#username').val();
+                const password = $('#password').val();
+                const csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.post("/SignIn/", {
+                    username: username,
+                    password: password,
+                    csrfmiddlewaretoken: csrfToken
+                }, function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        sessionStorage.setItem("user", JSON.stringify(response.user));
+                        if(JSON.parse(sessionStorage.getItem("user")).role === "E"){
+                            setTimeout(() => {
+                                window.location.href = "{% url 'Dashboard' %}";
+                            }, "2000");
+                        }
+                        else if(JSON.parse(sessionStorage.getItem("user")).role === "R"){
+                            setTimeout(() => {
+                                window.location.href = "{% url 'Responsable_Dashboard' %}";
+                            }, "2000");
+                        }
+                        else{
+                            setTimeout(() => {
+                                sessionStorage.clear();
+                                window.location.href = "{% url 'SignIn' %}";
+                            }, "2000");
+                        }
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.error,
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
